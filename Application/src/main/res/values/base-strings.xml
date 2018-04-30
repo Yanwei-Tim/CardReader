@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">CardReader</string>
+    <string name="intro_message">
+        <![CDATA[
+        
+            
+            This App demonstrates how to implement a low-level NFC card reader. This App
+            is designed to read the Virtual IDCard card implemented in the "CardEmulation".\n\n
+
+            In particular, this sample demonstrates how to disable Android Beam, select which AIDs the
+            reader is interested, and establish communication with the card.
+            
+        
+        ]]>
+    </string>
+</resources>
