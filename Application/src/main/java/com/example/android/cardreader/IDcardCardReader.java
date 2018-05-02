@@ -106,7 +106,7 @@ public class IDcardCardReader implements NfcAdapter.ReaderCallback {
                     Log.i(TAG, "cardnumber: " + cardnumber);
                     Log.i(TAG, "name: " + name);
                     Log.i(TAG, "password: " + password);
-                    mAccountCallback.get().onAccountReceived(idcardID);
+                    mAccountCallback.get().onAccountReceived(cardnumber);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
