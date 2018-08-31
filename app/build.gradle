@@ -1,0 +1,112 @@
+/*
+**
+**
+**                       _oo0oo_
+**                      o8888888o
+**                      88" . "88
+**                      (| -_- |)
+**                      0\  =  /0
+**                    ___/`---'\___
+**                  .' \\|     |// '.
+**                 / \\|||  :  |||// \
+**                / _||||| -:- |||||- \
+**               |   | \\\  -  /// |   |
+**               | \_|  ''\---/''  |_/ |
+**               \  .-\__  '-'  ___/-. /
+**             ___'. .'  /--.--\  `. .'___
+**          ."" '<  `.___\_<|>_/___.' >' "".
+**         | | :  `- \`.;`\ _ /`;.`/ - ` : | |
+**         \  \ `_.   \_ __\ /__ _/   .-` /  /
+**     =====`-.____`.___ \_____/___.-`___.-'=====
+**                       `=---='
+**
+**
+**     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**
+**               佛祖保佑         永无BUG
+**
+**
+**                   南无本师释迦牟尼佛
+**
+**
+******************* End of Head **********************\
+*/
+
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
+    defaultConfig {
+        applicationId "com.example.android.cardreader"
+        minSdkVersion 19
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+
+        //NDK配置
+        ndk {
+            moduleName "libakmixer"
+            abiFilters 'armeabi','armeabi-v7a', 'arm64-v8a'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+//    android.applicationVariants.all { variant ->
+//        variant.outputs.all {
+//            outputFileName = "XXXX.apk"
+//        }
+//    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDir 'src/main/libs'
+            jni.srcDirs = []
+        }
+    }
+    //NDK编译方法1
+    //externalNativeBuild {
+    //    ndkBuild {
+    //        path file("src/main/jni/Android.mk")
+    //    }
+    //}
+    //NDK编译方法2
+    task buildNative(type: Exec, description: 'Compile JNI source via NDK') {
+        def ndkDir = android.ndkDirectory
+        commandLine "$ndkDir/ndk-build.cmd",
+                '-C', file('src/main/jni').absolutePath, // Change src/main/jni the relative path to your jni source
+                '-j', Runtime.runtime.availableProcessors()
+    }
+
+    task cleanNative(type: Exec, description: 'Clean JNI object files') {
+        def ndkDir = android.ndkDirectory
+        commandLine "$ndkDir/ndk-build.cmd",
+                '-C', file('src/main/jni').absolutePath, // Change src/main/jni the relative path to your jni source
+                'clean'
+    }
+
+    clean.dependsOn 'cleanNative'
+
+    tasks.withType(JavaCompile) {
+        compileTask -> compileTask.dependsOn buildNative
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:cardview-v7:27.1.1'
+    implementation 'com.diogobernardino:williamchart:2.2'
+    implementation 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:0.7.0'
+    testImplementation 'junit:junit:4.12'
+}
